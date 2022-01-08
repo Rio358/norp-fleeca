@@ -14,7 +14,8 @@ dependencies {
 	'es_extended',
 	'PolyZone',
 	'qtarget',
-	'ox_inventory'
+	'ox_inventory',
+	'hacking'
 }
 
 shared_scripts {
