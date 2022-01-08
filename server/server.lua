@@ -24,13 +24,13 @@ AddEventHandler("norp-fleeca:startcheck", function(bank)
         end
     end
     local xPlayer = ESX.GetPlayerFromId(_source)
-    local item = xPlayer.getInventoryItem("cardA")["count"]
+    local item = xPlayer.getInventoryItem("hack_usb")["count"]
 
     if copcount >= Config.mincops then
         if not Config.Banks[bank].onaction == true then
             if (os.time() - Config.cooldown) > Config.Banks[bank].lastrobbed then
                 Config.Banks[bank].onaction = true
-                xPlayer.removeInventoryItem("cardA", 1)
+                xPlayer.removeInventoryItem("hack_usb", 1)
                 TriggerClientEvent("norp-fleeca:outcome", _source, true, bank)
                 TriggerClientEvent("norp-fleeca:policenotify", -1, bank)
             else
