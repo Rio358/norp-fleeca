@@ -8,7 +8,7 @@ Basic Fleeca Roberry for ESX
 * [ox_inventory](https://github.com/overextended/ox_inventory) (For default notifications)
 * [qtarget](https://github.com/overextended/qtarget)
 * [PolyZone](https://github.com/mkafrin/PolyZone)
-* [NoPixel-minigame](https://github.com/Jesper-Hustad/NoPixel-minigame)
+* [NoPixel-minigame](https://github.com/nightowlsrp/hacking)
 
 ## CREDITS
 [utk_fleeca](https://github.com/utkuali/Fleeca-Bank-Heists) (Borrowed some pieces of code from this)
