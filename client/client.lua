@@ -82,11 +82,11 @@ AddEventHandler("norp-fleeca:startLoot_c", function(data, name)
         Citizen.CreateThread(function()
             while true do
                 local pedcoords = GetEntityCoords(PlayerPedId())
-                local dst = GetDistanceBetweenCoords(pedcoords, data.doors.startloc.x, data.doors.startloc.y, data.doors.startloc.z, true)
+                local dst = #(pedcoords - vector3(data.doors.startloc.x, data.doors.startloc.y, data.doors.startloc.z))
 
                 if dst < 40 then
                     if not LootCheck[name].Loot1 then
-                        local dst1 = GetDistanceBetweenCoords(pedcoords, data.trolley1.x, data.trolley1.y, data.trolley1.z + 1, true)
+                        local dst1 = #(pedcoords - vector3(data.trolley1.x, data.trolley1.y, data.trolley1.z + 1))
                     end
 
                     if LootCheck[name].Stop or (LootCheck[name].Loot1 and LootCheck[name].Loot2 and LootCheck[name].Loot3) then
@@ -118,7 +118,7 @@ AddEventHandler("norp-fleeca:freezeDoors", function()
         while true do
             for k, v in pairs(Doors) do
                 if v[1].obj == nil or not DoesEntityExist(v[1].obj) then
-                    v[1].obj = GetClosestObjectOfType(v[1].loc, 1.5, GetHashKey("v_ilev_gb_vaubar"), false, false, false)
+                    v[1].obj = GetClosestObjectOfType(v[1].loc, 1.5, `v_ilev_gb_vaubar`, false, false, false)
                     FreezeEntityPosition(v[1].obj, v[1].locked)
                 else
                     FreezeEntityPosition(v[1].obj, v[1].locked)
@@ -226,7 +226,7 @@ AddEventHandler("norp-fleeca:startheist", function(data, name)
     SetEntityCoords(ped, data.doors.startloc.animcoords.x, data.doors.startloc.animcoords.y, data.doors.startloc.animcoords.z)
     SetEntityHeading(ped, data.doors.startloc.animcoords.h)
     local pedco = GetEntityCoords(PlayerPedId())
-    IdProp = CreateObject(GetHashKey("p_ld_id_card_01"), pedco, 1, 1, 0)
+    IdProp = CreateObject(`p_ld_id_card_01`, pedco, 1, 1, 0)
     local boneIndex = GetPedBoneIndex(PlayerPedId(), 28422)
 
     AttachEntityToEntity(IdProp, ped, boneIndex, 0.12, 0.028, 0.001, 10.0, 175.0, 0.0, true, true, false, true, 1, true)
@@ -253,14 +253,14 @@ end)
 AddEventHandler("norp-fleeca:cleanUp", function(data, name)
     Citizen.Wait(10000)
     for i = 1, 3, 1 do -- full trolley clean
-        local obj = GetClosestObjectOfType(data.objects[i].x, data.objects[i].y, data.objects[i].z, 0.75, GetHashKey("hei_prop_hei_cash_trolly_01"), false, false, false)
+        local obj = GetClosestObjectOfType(data.objects[i].x, data.objects[i].y, data.objects[i].z, 0.75, `hei_prop_hei_cash_trolly_01`, false, false, false)
 
         if DoesEntityExist(obj) then
             DeleteEntity(obj)
         end
     end
     for j = 1, 3, 1 do -- empty trolley clean
-        local obj = GetClosestObjectOfType(data.objects[j].x, data.objects[j].y, data.objects[j].z, 0.75, GetHashKey("hei_prop_hei_cash_trolly_03"), false, false, false)
+        local obj = GetClosestObjectOfType(data.objects[j].x, data.objects[j].y, data.objects[j].z, 0.75, `hei_prop_hei_cash_trolly_03`, false, false, false)
 
         if DoesEntityExist(obj) then
             DeleteEntity(obj)
@@ -281,7 +281,7 @@ function SpawnTrolleys(data, name)
     while not HasModelLoaded("hei_prop_hei_cash_trolly_01") do
         Citizen.Wait(1)
     end
-    Trolley1 = CreateObject(GetHashKey("hei_prop_hei_cash_trolly_01"), data.trolley1.x, data.trolley1.y, data.trolley1.z, 1, 1, 0)
+    Trolley1 = CreateObject(`hei_prop_hei_cash_trolly_01`, data.trolley1.x, data.trolley1.y, data.trolley1.z, 1, 1, 0)
     local h1 = GetEntityHeading(Trolley1)
 
     SetEntityHeading(Trolley1, h1 + Config.Banks[name].trolley1.h)
@@ -303,7 +303,7 @@ AddEventHandler('norp-fleeca:grab', function(name)
     local ped = PlayerPedId()
     local model = "hei_prop_heist_cash_pile"
 
-    Trolley = GetClosestObjectOfType(GetEntityCoords(ped), 1.0, GetHashKey("hei_prop_hei_cash_trolly_01"), false, false, false)
+    Trolley = GetClosestObjectOfType(GetEntityCoords(ped), 1.0, `hei_prop_hei_cash_trolly_01`, false, false, false)
     local CashAppear = function()
 	    local pedCoords = GetEntityCoords(ped)
         local grabmodel = GetHashKey(model)
@@ -325,12 +325,12 @@ AddEventHandler('norp-fleeca:grab', function(name)
 		    while GetGameTimer() - startedGrabbing < 37000 do
 			    Citizen.Wait(1)
 			    DisableControlAction(0, 73, true)
-			    if HasAnimEventFired(ped, GetHashKey("CASH_APPEAR")) then
+			    if HasAnimEventFired(ped, `CASH_APPEAR`) then
 				    if not IsEntityVisible(grabobj) then
 					    SetEntityVisible(grabobj, true, false)
 				    end
 			    end
-			    if HasAnimEventFired(ped, GetHashKey("RELEASE_CASH_DESTROY")) then
+			    if HasAnimEventFired(ped, `RELEASE_CASH_DESTROY`) then
 				    if IsEntityVisible(grabobj) then
                         SetEntityVisible(grabobj, false, false)
                         TriggerServerEvent("norp-fleeca:rewardCash")
@@ -341,12 +341,12 @@ AddEventHandler('norp-fleeca:grab', function(name)
 	    end)
     end
 	local trollyobj = Trolley
-    local emptyobj = GetHashKey("hei_prop_hei_cash_trolly_03")
+    local emptyobj = `hei_prop_hei_cash_trolly_03`
 
 	if IsEntityPlayingAnim(trollyobj, "anim@heists@ornate_bank@grab_cash", "cart_cash_dissapear", 3) then
 		return
     end
-    local baghash = GetHashKey("hei_p_m_bag_var22_arm_s")
+    local baghash =`hei_p_m_bag_var22_arm_s`
 
     RequestAnimDict("anim@heists@ornate_bank@grab_cash")
     RequestModel(baghash)
@@ -358,7 +358,7 @@ AddEventHandler('norp-fleeca:grab', function(name)
 		Citizen.Wait(1)
 		NetworkRequestControlOfEntity(trollyobj)
 	end
-	local bag = CreateObject(GetHashKey("hei_p_m_bag_var22_arm_s"), GetEntityCoords(PlayerPedId()), true, false, false)
+	local bag = CreateObject(`hei_p_m_bag_var22_arm_s`, GetEntityCoords(PlayerPedId()), true, false, false)
     local scene1 = NetworkCreateSynchronisedScene(GetEntityCoords(trollyobj), GetEntityRotation(trollyobj), 2, false, false, 1065353216, 0, 1.3)
 
 	NetworkAddPedToSynchronisedScene(ped, scene1, "anim@heists@ornate_bank@grab_cash", "intro", 1.5, -4.0, 1, 16, 1148846080, 0)
@@ -392,7 +392,7 @@ AddEventHandler('norp-fleeca:grab', function(name)
     SetPedComponentVariation(ped, 5, 45, 0, 0)
 	RemoveAnimDict("anim@heists@ornate_bank@grab_cash")
 	SetModelAsNoLongerNeeded(emptyobj)
-    SetModelAsNoLongerNeeded(GetHashKey("hei_p_m_bag_var22_arm_s"))
+    SetModelAsNoLongerNeeded(`hei_p_m_bag_var22_arm_s`)
     disableinput = false
 end)
 
@@ -453,7 +453,7 @@ AddEventHandler('norp-fleeca:hack', function()
 
     for k, v in pairs(Config.Banks) do
         if not v.onaction then
-            local dst = GetDistanceBetweenCoords(GetEntityCoords(PlayerPedId()), v.doors.startloc.x, v.doors.startloc.y, v.doors.startloc.z, true)
+            local dst = #(GetEntityCoords(PlayerPedId()) - vector3(v.doors.startloc.x, v.doors.startloc.y, v.doors.startloc.z))
 
             if dst <= 1 and not Check[k] then
                 Wait(750)
