@@ -13,7 +13,6 @@ Config.Banks = {
         doors = {
             startloc = {x = 310.93, y = -284.44, z = 54.16, h = -90.00, animcoords = {x = 311.05, y = -284.00, z = 53.16, h = 248.60}},
             secondloc = {x = 312.93, y = -284.45, z = 54.16, h = 160.91, animcoords = {x = 313.41, y = -284.42, z = 53.16, h = 160.91}},
-            --lockpick = {x = , y = , z = , h = , animcoords = {x = , y = , z = }}
         },
         prop = {
             first = {coords = vector3(311.5481, -284.5114, 54.285), rot = vector3(90.0, 180.0, 21.0)},
