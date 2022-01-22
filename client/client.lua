@@ -470,6 +470,29 @@ AddEventHandler('norp-fleeca:hack', function()
     end
 end)
 
+RegisterNetEvent("norp-fleeca:policenotify")
+AddEventHandler("norp-fleeca:policenotify", function(name)
+    local PlayerData = ESX.GetPlayerData()
+    local blip = nil
+
+    while PlayerData.job == nil do
+        Citizen.Wait(1)
+    end
+    if PlayerData.job.name == "police" then
+	TriggerEvent('ox_inventory:notify', {type = 'error', text = "A bank's alarms are triggered!"})
+        if not DoesBlipExist(blip) then
+            blip = AddBlipForCoord(Config.Banks[name].doors.startloc.x, Config.Banks[name].doors.startloc.y, Config.Banks[name].doors.startloc.z)
+            SetBlipSprite(blip, 161)
+            SetBlipScale(blip, 2.0)
+            SetBlipColour(blip, 1)
+
+            PulseBlip(blip)
+            Citizen.Wait(240000)
+            RemoveBlip(blip)
+        end
+    end
+end)
+
 exports['qtarget']:AddCircleZone("trolley", vector3(1174.24, 2716.69, 37.07), 1.0, {
 	name ="trolley",
 	useZ = true,
