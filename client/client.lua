@@ -457,28 +457,30 @@ AddEventHandler('norp-fleeca:hack', function()
             local dst = #(GetEntityCoords(PlayerPedId()) - vector3(v.doors.startloc.x, v.doors.startloc.y, v.doors.startloc.z))
 
             if dst <= 1 and not Check[k] then
-                TriggerEvent('ultra-voltlab', 30, function(outcome,reason)
-                    -- time: Time in seconds which player has. Min is 10, Max is 60
-                    -- result: Reason is the reason of result. Result is an integer code which represents result.
-                    -- 	   0: Hack failed by player
-                    -- 	   1: Hack successful
-                    -- 	   2: Time ran out and hack failed
-                    -- 	  -1: Error occured i.e. passed input or contents in config is wrong
-                    if outcome == 0 then
-                        print('Hack failed', reason)
-                        TriggerEvent('ox_inventory:notify', {type = 'error', text = 'You Failed to Hack.'})
-                        TriggerServerEvent("norp-fleeca:metadata")
-                    elseif outcome == 1 then
-                        print('Hack successful')
-                        Wait(750)
-                        TriggerServerEvent("norp-fleeca:startcheck", k)
-                    elseif outcome == 2 then
-                        print('Timed out')
-                        TriggerServerEvent("norp-fleeca:metadata")
-                    elseif outcome == -1 then
-                        print('Error occured',reason)
-                    end
-                end)
+                local item = exports.ox_inventory:Search(2, 'heistusbgreen', {durability = 0})
+                if item >= 1 then
+                    TriggerEvent('ox_inventory:notify', {type = 'error', text = 'Your usb broke.'})
+                    TriggerServerEvent("norp-fleeca:delusb")
+                else
+                    TriggerEvent('ultra-voltlab', 30, function(outcome,reason)
+                        -- time: Time in seconds which player has. Min is 10, Max is 60
+                        -- result: Reason is the reason of result. Result is an integer code which represents result.
+                        -- 	   0: Hack failed by player
+                        -- 	   1: Hack successful
+                        -- 	   2: Time ran out and hack failed
+                        -- 	  -1: Error occured i.e. passed input or contents in config is wrong
+                        if outcome == 0 then
+                            TriggerEvent('ox_inventory:notify', {type = 'error', text = 'You Failed to Hack.'})
+                            TriggerServerEvent("norp-fleeca:metadata")
+                        elseif outcome == 1 then
+                            Wait(750)
+                            TriggerServerEvent("norp-fleeca:startcheck", k)
+                        elseif outcome == 2 then
+                            TriggerServerEvent("norp-fleeca:metadata")
+                        end
+                    end)
+                    
+                end
             end
         end
     end
