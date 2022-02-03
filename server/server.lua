@@ -111,13 +111,20 @@ AddEventHandler("norp-fleeca:metadata", function()
         heistusb = v
     end
     if heistusb.metadata.durability == nil then 
-        heistusb.metadata.durability = 3 
+        heistusb.metadata.durability = 2 
     else
         heistusb.metadata.durability = heistusb.metadata.durability-1
-        if heistusb.metadata.durability <= 0 then
-            ox_inventory:RemoveItem(xPlayer.source, 'heistusbgreen', 1, {heistusb.metadata.durability == 0})
-        end
+    end
+    if heistusb.metadata.durability <= 0 then
+        ox_inventory:RemoveItem(xPlayer.source, 'heistusbgreen', 1, {durability = 0})
     end
     ox_inventory:SetMetadata(xPlayer.source, heistusb.slot, heistusb.metadata)
+end) 
+
+
+RegisterServerEvent("norp-fleeca:delusb")
+AddEventHandler("norp-fleeca:delusb", function()
+    local xPlayer = ESX.GetPlayerFromId(source)
+    exports.ox_inventory:RemoveItem(xPlayer.source, 'heistusbgreen', 1, {durability = 0})
 end) 
 
