@@ -434,7 +434,7 @@ Citizen.CreateThread(function()
     end)
     TriggerEvent("norp-fleeca:freezeDoors")
     while true do
-        if ESX.GetPlayerData().job.name ~= "police" then
+       if PlayerData.job.name ~= "police" then
             local coords = GetEntityCoords(PlayerPedId())
 
         else
