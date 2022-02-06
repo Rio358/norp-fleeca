@@ -428,13 +428,20 @@ Citizen.CreateThread(function()
 end)
 
 Citizen.CreateThread(function()
+    while ESX.GetPlayerData().job == nil do
+        Citizen.Wait(500)
+    end
+    PlayerData = ESX.GetPlayerData()
+    while PlayerData == nil do
+        Citizen.Wait(500)
+    end
     ESX.TriggerServerCallback("norp-fleeca:getBanks", function(bank, door)
         Config.Banks = bank
         Doors = door
     end)
     TriggerEvent("norp-fleeca:freezeDoors")
     while true do
-       if PlayerData.job.name ~= "police" then
+        if PlayerData.job.name ~= "police" then
             local coords = GetEntityCoords(PlayerPedId())
 
         else
