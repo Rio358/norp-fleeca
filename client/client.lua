@@ -1,6 +1,3 @@
-ESX = nil
-TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
-
 Freeze = {F1 = 0, F2 = 0, F3 = 0, F4 = 0, F5 = 0, F6 = 0}
 PlayerData = nil
 Check = {F1 = false, F2 = false, F3 = false, F4 = false, F5 = false, F6 = false}
@@ -282,6 +279,20 @@ function SpawnTrolleys(data, name)
         Citizen.Wait(1)
     end
     Trolley1 = CreateObject(`hei_prop_hei_cash_trolly_01`, data.trolley1.x, data.trolley1.y, data.trolley1.z, 1, 1, 0)
+    exports.qtarget:AddEntityZone("trolly", Trolley1, {
+        name="trolly",
+        debugPoly=false,
+        useZ = true
+            }, {
+            options = {
+                {
+                event = "norp-fleeca:grab",
+                icon = "fas fa-money-bill",
+                label = "Grab the cash",
+                },
+            },
+            distance = 2.5
+        }) 
     local h1 = GetEntityHeading(Trolley1)
 
     SetEntityHeading(Trolley1, h1 + Config.Banks[name].trolley1.h)
@@ -394,6 +405,7 @@ AddEventHandler('norp-fleeca:grab', function(name)
 	SetModelAsNoLongerNeeded(emptyobj)
     SetModelAsNoLongerNeeded(`hei_p_m_bag_var22_arm_s`)
     disableinput = false
+    exports.qtarget:RemoveZone('trolly')
 end)
 
 Citizen.CreateThread(function()
@@ -412,20 +424,16 @@ Citizen.CreateThread(function()
         else
             Citizen.Wait(1000)
         end
-        Citizen.Wait(1)
     end
 end)
 
 Citizen.CreateThread(function()
-    while ESX == nil do
-        Citizen.Wait(100)
-    end
     while ESX.GetPlayerData().job == nil do
-        Citizen.Wait(100)
+        Citizen.Wait(500)
     end
     PlayerData = ESX.GetPlayerData()
     while PlayerData == nil do
-        Citizen.Wait(100)
+        Citizen.Wait(500)
     end
     ESX.TriggerServerCallback("norp-fleeca:getBanks", function(bank, door)
         Config.Banks = bank
@@ -442,10 +450,10 @@ Citizen.CreateThread(function()
         Citizen.Wait(1)
     end
 end)
-
+--[[
 RegisterCommand('norpfleeca', function()
     TriggerEvent('norp-fleeca:hack')
-end)
+end)]]
 
 RegisterNetEvent('norp-fleeca:hack')
 AddEventHandler('norp-fleeca:hack', function()
@@ -456,15 +464,30 @@ AddEventHandler('norp-fleeca:hack', function()
             local dst = #(GetEntityCoords(PlayerPedId()) - vector3(v.doors.startloc.x, v.doors.startloc.y, v.doors.startloc.z))
 
             if dst <= 1 and not Check[k] then
-                Wait(750)
-                exports['hacking']:OpenHackingGame(function(outcome)
-                    if outcome == true then 
-                        Wait(750)
-                        TriggerServerEvent("norp-fleeca:startcheck", k)
-                    elseif outcome == false then
-						TriggerEvent('ox_inventory:notify', {type = 'error', text = 'You Failed to Hack.'})
-                    end
-                end)
+                local item = exports.ox_inventory:Search(2, 'heistusbgreen', {durability = 0})
+                if item >= 1 then
+                    TriggerEvent('ox_inventory:notify', {type = 'error', text = 'Your usb broke.'})
+                    TriggerServerEvent("norp-fleeca:delusb")
+                else
+                    TriggerEvent('ultra-voltlab', 30, function(outcome,reason)
+                        -- time: Time in seconds which player has. Min is 10, Max is 60
+                        -- result: Reason is the reason of result. Result is an integer code which represents result.
+                        -- 	   0: Hack failed by player
+                        -- 	   1: Hack successful
+                        -- 	   2: Time ran out and hack failed
+                        -- 	  -1: Error occured i.e. passed input or contents in config is wrong
+                        if outcome == 0 then
+                            TriggerEvent('ox_inventory:notify', {type = 'error', text = 'You Failed to Hack.'})
+                            TriggerServerEvent("norp-fleeca:metadata")
+                        elseif outcome == 1 then
+                            Wait(750)
+                            TriggerServerEvent("norp-fleeca:startcheck", k)
+                        elseif outcome == 2 then
+                            TriggerServerEvent("norp-fleeca:metadata")
+                        end
+                    end)
+                    
+                end
             end
         end
     end
@@ -493,101 +516,6 @@ AddEventHandler("norp-fleeca:policenotify", function(name)
     end
 end)
 
-exports['qtarget']:AddCircleZone("trolley", vector3(1174.24, 2716.69, 37.07), 1.0, {
-	name ="trolley",
-	useZ = true,
-	--debugPoly=true
-	}, {
-	options = {
-		{
-			event = "norp-fleeca:grab",
-			icon = "fas fa-money-bill",
-			label = "Collect Cash!",
-		},
-	},
-	job = {"all"},
-	distance = 3.7
-})
-
-exports['qtarget']:AddCircleZone("trolley2", vector3(-353.34, -59.48, 48.01), 1.0, {
-	name ="trolley2",
-	useZ = true,
-	--debugPoly=true
-	}, {
-	options = {
-		{
-			event = "norp-fleeca:grab",
-			icon = "fas fa-money-bill",
-			label = "Collect Cash!",
-		},
-	},
-	job = {"all"},
-	distance = 3.7
-})
-
-exports['qtarget']:AddCircleZone("trolley3", vector3(-2952.69, 483.34, 14.68), 1.0, {
-	name ="trolley3",
-	useZ = true,
-	--debugPoly=true
-	}, {
-	options = {
-		{
-			event = "norp-fleeca:grab",
-			icon = "fas fa-money-bill",
-			label = "Collect Cash!",
-		},
-	},
-	job = {"all"},
-	distance = 3.7
-})
-
-exports['qtarget']:AddCircleZone("trolley4", vector3(-1207.50, -339.20, 36.76), 1.0, {
-	name ="trolley4",
-	useZ = true,
-	--debugPoly=true
-	}, {
-	options = {
-		{
-			event = "norp-fleeca:grab",
-			icon = "fas fa-money-bill",
-			label = "Collect Cash!",
-		},
-	},
-	job = {"all"},
-	distance = 3.7
-})
-
-exports['qtarget']:AddCircleZone("trolley5", vector3(147.25, -1050.38, 28.35), 1.0, {
-	name ="trolley5",
-	useZ = true,
-	--debugPoly=true
-	}, {
-	options = {
-		{
-			event = "norp-fleeca:grab",
-			icon = "fas fa-money-bill",
-			label = "Collect Cash!",
-		},
-	},
-	job = {"all"},
-	distance = 3.7
-})
-
-exports['qtarget']:AddCircleZone("trolley6", vector3(313.450, -289.24, 54.1404), 1.0, {
-	name ="trolley6",
-	useZ = true,
-	--debugPoly=true
-	}, {
-	options = {
-		{
-			event = "norp-fleeca:grab",
-			icon = "fas fa-money-bill",
-			label = "Collect Cash!",
-		},
-	},
-	job = {"all"},
-	distance = 3.7
-})
 
 exports['qtarget']:AddBoxZone("fleecapad1", vector3(311.58, -284.62, 54.17), 0.5, 0.2, {
 	name="fleecapad1",
@@ -600,8 +528,8 @@ exports['qtarget']:AddBoxZone("fleecapad1", vector3(311.58, -284.62, 54.17), 0.5
 			{
 				event = "norp-fleeca:hack",
 				icon = "fas fa-laptop-code",
-				label = "HACK DOOR",
-				item = "hack_usb",
+				label = "Deur hacken",
+				item = "heistusbgreen",
 			},
 		},
 		distance = 3.5
@@ -618,8 +546,8 @@ exports['qtarget']:AddBoxZone("fleecapad2", vector3(147.2, -1046.22, 29.38), 0.6
 			{
 				event = "norp-fleeca:hack",
 				icon = "fas fa-laptop-code",
-				label = "HACK DOOR",
-				item = "hack_usb",
+				label = "Deur hacken",
+				item = "heistusbgreen",
 			},
 		},
 		distance = 3.5
@@ -636,8 +564,8 @@ exports['qtarget']:AddBoxZone("fleecapad3", vector3(-1210.44, -336.41, 37.79), 0
 			{
 				event = "norp-fleeca:hack",
 				icon = "fas fa-laptop-code",
-				label = "HACK DOOR",
-				item = "hack_usb",
+				label = "Deur hacken",
+				item = "heistusbgreen",
 			},
 		},
 		distance = 3.5
@@ -654,8 +582,8 @@ exports['qtarget']:AddBoxZone("fleecapad4", vector3(-2956.5, 482.12, 15.71), 0.1
 			{
 				event = "norp-fleeca:hack",
 				icon = "fas fa-laptop-code",
-				label = "HACK DOOR",
-				item = "hack_usb",
+				label = "Deur hacken",
+				item = "heistusbgreen",
 			},
 		},
 		distance = 3.5
@@ -672,8 +600,8 @@ exports['qtarget']:AddBoxZone("fleecapad5", vector3(-353.51, -55.47, 49.05), 0.5
 			{
 				event = "norp-fleeca:hack",
 				icon = "fas fa-laptop-code",
-				label = "HACK DOOR",
-				item = "hack_usb",
+				label = "Deur hacken",
+				item = "heistusbgreen",
 			},
 		},
 		distance = 3.5
@@ -690,8 +618,8 @@ exports['qtarget']:AddBoxZone("fleecapad6", vector3(1175.63, 2712.9, 38.1), 0.6,
 			{
 				event = "norp-fleeca:hack",
 				icon = "fas fa-laptop-code",
-				label = "HACK DOOR",
-				item = "hack_usb",
+				label = "Deur hacken",
+				item = "heistusbgreen",
 			},
 		},
 		distance = 3.5

@@ -1,5 +1,3 @@
-ESX = nil
-TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 
 Doors = {
     ["F1"] = {{loc = vector3(312.93, -284.45, 54.16), h = 160.91, txtloc = vector3(312.93, -284.45, 54.16), obj = nil, locked = false}, {loc = vector3(310.93, -284.44, 54.16), txtloc = vector3(310.93, -284.44, 54.16), state = nil, locked = true}},
@@ -24,13 +22,13 @@ AddEventHandler("norp-fleeca:startcheck", function(bank)
         end
     end
     local xPlayer = ESX.GetPlayerFromId(_source)
-    local item = xPlayer.getInventoryItem("hack_usb")["count"]
+    local item = xPlayer.getInventoryItem("heistusbgreen")["count"]
 
     if copcount >= Config.mincops then
         if not Config.Banks[bank].onaction == true then
             if (os.time() - Config.cooldown) > Config.Banks[bank].lastrobbed then
                 Config.Banks[bank].onaction = true
-                xPlayer.removeInventoryItem("hack_usb", 1)
+                xPlayer.removeInventoryItem("heistusbgreen", 1)
                 TriggerClientEvent("norp-fleeca:outcome", _source, true, bank)
                 TriggerClientEvent("norp-fleeca:policenotify", -1, bank)
             else
@@ -103,3 +101,30 @@ end)
 ESX.RegisterServerCallback("norp-fleeca:getBanks", function(source, cb)
     cb(Config.Banks, Doors)
 end)
+local ox_inventory = exports.ox_inventory
+
+RegisterServerEvent("norp-fleeca:metadata")
+AddEventHandler("norp-fleeca:metadata", function()
+    local xPlayer = ESX.GetPlayerFromId(source)
+    local heistusb = ox_inventory:Search(xPlayer.source, 1, 'heistusbgreen')
+    for k, v in pairs(heistusb) do
+        heistusb = v
+    end
+    if heistusb.metadata.durability == nil then 
+        heistusb.metadata.durability = 2 
+    else
+        heistusb.metadata.durability = heistusb.metadata.durability-1
+    end
+    if heistusb.metadata.durability <= 0 then
+        ox_inventory:RemoveItem(xPlayer.source, 'heistusbgreen', 1, {durability = 0})
+    end
+    ox_inventory:SetMetadata(xPlayer.source, heistusb.slot, heistusb.metadata)
+end) 
+
+
+RegisterServerEvent("norp-fleeca:delusb")
+AddEventHandler("norp-fleeca:delusb", function()
+    local xPlayer = ESX.GetPlayerFromId(source)
+    exports.ox_inventory:RemoveItem(xPlayer.source, 'heistusbgreen', 1, {durability = 0})
+end) 
+
