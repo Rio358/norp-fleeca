@@ -453,7 +453,7 @@ end)
 --[[
 RegisterCommand('norpfleeca', function()
     TriggerEvent('norp-fleeca:hack')
-end)]]
+end)]]--
 
 RegisterNetEvent('norp-fleeca:hack')
 AddEventHandler('norp-fleeca:hack', function()
@@ -464,30 +464,23 @@ AddEventHandler('norp-fleeca:hack', function()
             local dst = #(GetEntityCoords(PlayerPedId()) - vector3(v.doors.startloc.x, v.doors.startloc.y, v.doors.startloc.z))
 
             if dst <= 1 and not Check[k] then
-                local item = exports.ox_inventory:Search(2, 'heistusbgreen', {durability = 0})
-                if item >= 1 then
+				local item = exports.ox_inventory:Search(2, 'hack_usb', {durability = 0})
+				if item >= 1 then
                     TriggerEvent('ox_inventory:notify', {type = 'error', text = 'Your usb broke.'})
                     TriggerServerEvent("norp-fleeca:delusb")
-                else
-                    TriggerEvent('ultra-voltlab', 30, function(outcome,reason)
-                        -- time: Time in seconds which player has. Min is 10, Max is 60
-                        -- result: Reason is the reason of result. Result is an integer code which represents result.
-                        -- 	   0: Hack failed by player
-                        -- 	   1: Hack successful
-                        -- 	   2: Time ran out and hack failed
-                        -- 	  -1: Error occured i.e. passed input or contents in config is wrong
-                        if outcome == 0 then
-                            TriggerEvent('ox_inventory:notify', {type = 'error', text = 'You Failed to Hack.'})
+				else
+                exports['hacking']:OpenHackingGame(function(outcome)
+                        if outcome == true then
+                            TriggerServerEvent("norp-fleeca:startcheck", k)
                             TriggerServerEvent("norp-fleeca:metadata")
-                        elseif outcome == 1 then
+                        elseif outcome == false then
                             Wait(750)
                             TriggerServerEvent("norp-fleeca:startcheck", k)
-                        elseif outcome == 2 then
-                            TriggerServerEvent("norp-fleeca:metadata")
-                        end
-                    end)
-                    
-                end
+							TriggerEvent('ox_inventory:notify', {type = 'error', text = 'You Failed to Hack.'})
+							TriggerServerEvent("norp-fleeca:metadata")
+                    end
+                end)
+				end
             end
         end
     end
@@ -528,8 +521,8 @@ exports['qtarget']:AddBoxZone("fleecapad1", vector3(311.58, -284.62, 54.17), 0.5
 			{
 				event = "norp-fleeca:hack",
 				icon = "fas fa-laptop-code",
-				label = "Deur hacken",
-				item = "heistusbgreen",
+				label = "HACK DOOR",
+				item = "hack_usb",
 			},
 		},
 		distance = 3.5
@@ -546,8 +539,8 @@ exports['qtarget']:AddBoxZone("fleecapad2", vector3(147.2, -1046.22, 29.38), 0.6
 			{
 				event = "norp-fleeca:hack",
 				icon = "fas fa-laptop-code",
-				label = "Deur hacken",
-				item = "heistusbgreen",
+				label = "HACK DOOR",
+				item = "hack_usb",
 			},
 		},
 		distance = 3.5
@@ -564,8 +557,8 @@ exports['qtarget']:AddBoxZone("fleecapad3", vector3(-1210.44, -336.41, 37.79), 0
 			{
 				event = "norp-fleeca:hack",
 				icon = "fas fa-laptop-code",
-				label = "Deur hacken",
-				item = "heistusbgreen",
+				label = "HACK DOOR",
+				item = "hack_usb",
 			},
 		},
 		distance = 3.5
@@ -582,8 +575,8 @@ exports['qtarget']:AddBoxZone("fleecapad4", vector3(-2956.5, 482.12, 15.71), 0.1
 			{
 				event = "norp-fleeca:hack",
 				icon = "fas fa-laptop-code",
-				label = "Deur hacken",
-				item = "heistusbgreen",
+				label = "HACK DOOR",
+				item = "hack_usb",
 			},
 		},
 		distance = 3.5
@@ -600,8 +593,8 @@ exports['qtarget']:AddBoxZone("fleecapad5", vector3(-353.51, -55.47, 49.05), 0.5
 			{
 				event = "norp-fleeca:hack",
 				icon = "fas fa-laptop-code",
-				label = "Deur hacken",
-				item = "heistusbgreen",
+				label = "HACK DOOR",
+				item = "hack_usb",
 			},
 		},
 		distance = 3.5
@@ -618,8 +611,8 @@ exports['qtarget']:AddBoxZone("fleecapad6", vector3(1175.63, 2712.9, 38.1), 0.6,
 			{
 				event = "norp-fleeca:hack",
 				icon = "fas fa-laptop-code",
-				label = "Deur hacken",
-				item = "heistusbgreen",
+				label = "HACK DOOR",
+				item = "hack_usb",
 			},
 		},
 		distance = 3.5
