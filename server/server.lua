@@ -1,4 +1,3 @@
-
 Doors = {
     ["F1"] = {{loc = vector3(312.93, -284.45, 54.16), h = 160.91, txtloc = vector3(312.93, -284.45, 54.16), obj = nil, locked = false}, {loc = vector3(310.93, -284.44, 54.16), txtloc = vector3(310.93, -284.44, 54.16), state = nil, locked = true}},
     ["F2"] = {{loc = vector3(148.76, -1045.89, 29.37), h = 158.54, txtloc = vector3(148.76, -1045.89, 29.37), obj = nil, locked = false}, {loc = vector3(146.61, -1046.02, 29.37), txtloc = vector3(146.61, -1046.02, 29.37), state = nil, locked = true}},
@@ -22,13 +21,13 @@ AddEventHandler("norp-fleeca:startcheck", function(bank)
         end
     end
     local xPlayer = ESX.GetPlayerFromId(_source)
-    local item = xPlayer.getInventoryItem("heistusbgreen")["count"]
+    local item = xPlayer.getInventoryItem("hack_usb")["count"]
 
     if copcount >= Config.mincops then
         if not Config.Banks[bank].onaction == true then
             if (os.time() - Config.cooldown) > Config.Banks[bank].lastrobbed then
                 Config.Banks[bank].onaction = true
-                xPlayer.removeInventoryItem("heistusbgreen", 1)
+                xPlayer.removeInventoryItem("hack_usb", 1)
                 TriggerClientEvent("norp-fleeca:outcome", _source, true, bank)
                 TriggerClientEvent("norp-fleeca:policenotify", -1, bank)
             else
@@ -106,25 +105,25 @@ local ox_inventory = exports.ox_inventory
 RegisterServerEvent("norp-fleeca:metadata")
 AddEventHandler("norp-fleeca:metadata", function()
     local xPlayer = ESX.GetPlayerFromId(source)
-    local heistusb = ox_inventory:Search(xPlayer.source, 1, 'heistusbgreen')
-    for k, v in pairs(heistusb) do
-        heistusb = v
+    local hack_usb = ox_inventory:Search(xPlayer.source, 1, 'hack_usb')
+    for k, v in pairs(hack_usb) do
+        hack_usb = v
     end
-    if heistusb.metadata.durability == nil then 
-        heistusb.metadata.durability = 2 
+    if hack_usb.metadata.durability == nil then 
+        hack_usb.metadata.durability = 2 
     else
-        heistusb.metadata.durability = heistusb.metadata.durability-1
+        heistusb.metadata.durability = hack_usb.metadata.durability-1
     end
-    if heistusb.metadata.durability <= 0 then
-        ox_inventory:RemoveItem(xPlayer.source, 'heistusbgreen', 1, {durability = 0})
+    if hack_usb.metadata.durability <= 0 then
+        ox_inventory:RemoveItem(xPlayer.source, 'hack_usb', 1, {durability = 0})
     end
-    ox_inventory:SetMetadata(xPlayer.source, heistusb.slot, heistusb.metadata)
+    ox_inventory:SetMetadata(xPlayer.source, hack_usb.slot, hack_usb.metadata)
 end) 
 
 
 RegisterServerEvent("norp-fleeca:delusb")
 AddEventHandler("norp-fleeca:delusb", function()
     local xPlayer = ESX.GetPlayerFromId(source)
-    exports.ox_inventory:RemoveItem(xPlayer.source, 'heistusbgreen', 1, {durability = 0})
+    exports.ox_inventory:RemoveItem(xPlayer.source, 'hack_usb', 1, {durability = 0})
 end) 
 
