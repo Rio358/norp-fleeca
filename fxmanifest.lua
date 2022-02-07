@@ -15,11 +15,12 @@ dependencies {
 	'PolyZone',
 	'qtarget',
 	'ox_inventory',
+	'hacking'
 }
 
 shared_scripts {
+	'@es_extended/imports.lua',
 	'shared/*.lua',
-	'@es_extended/imports.lua'
 }
 
 client_scripts {
